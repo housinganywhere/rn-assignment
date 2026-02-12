@@ -55,3 +55,8 @@ export const truncateText = (text: string, maxLength: number): string => {
 export const generateRequestId = (): string => {
   return Math.random().toString(36).substring(2, 9);
 };
+
+// Halt or delay code execution
+// This is used to simulate a server response time
+export const sleep = (ms: number) =>
+  new Promise(resolve => setTimeout(resolve, ms));

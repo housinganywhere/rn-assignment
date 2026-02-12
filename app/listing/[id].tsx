@@ -19,7 +19,6 @@ export default function ListingDetailsScreen() {
   return (
     <PropertyDetails
       listing={listing}
-      onClose={() => router.back()}
       onContact={() => Alert.alert('Contact', 'Contact feature is not available in this demo.')}
     />
   );

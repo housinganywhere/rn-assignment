@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { Listing } from '../types';
+import { Listing, SearchCategory } from '../types';
 import { COLORS } from '../constants/colors';
 
 interface ListingCardProps {
@@ -9,7 +9,6 @@ interface ListingCardProps {
 }
 
 export const ListingCard: React.FC<ListingCardProps> = ({ listing, onPress }) => {
-  
 
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('en-EU', {
@@ -17,19 +16,6 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onPress }) =>
       currency,
       minimumFractionDigits: 0,
     }).format(price);
-  };
-
-  const formatRelativeTime = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-    if (diffHours < 1) return 'Just now';
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString();
   };
 
   return (
@@ -58,14 +44,14 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onPress }) =>
           >
             {listing.title}
           </Text>
-          {listing.unreadMessages > 0 && (
+          {listing.category === SearchCategory.VERIFIED && (
             <View
               style={[
                 styles.badge,
-                { backgroundColor: COLORS.primary },
+                { backgroundColor: COLORS.success },
               ]}
             >
-              <Text style={styles.badgeText}>{listing.unreadMessages}</Text>
+              <Text style={styles.badgeText}>✔</Text>
             </View>
           )}
         </View>
@@ -85,12 +71,6 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing, onPress }) =>
             {listing.bedrooms} bed • {listing.size} m²
           </Text>
         </View>
-
-        <Text
-          style={[styles.timestamp, { color: COLORS.textSecondary }]}
-        >
-          {formatRelativeTime(listing.lastMessageAt)}
-        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -153,9 +133,5 @@ const styles = StyleSheet.create({
   },
   meta: {
     fontSize: 13,
-  },
-  timestamp: {
-    fontSize: 12,
-    marginTop: 4,
-  },
+  }
 });

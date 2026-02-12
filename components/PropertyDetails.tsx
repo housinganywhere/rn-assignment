@@ -13,16 +13,24 @@ import { COLORS } from '../constants/colors';
 
 interface PropertyDetailsProps {
   listing: Listing;
-  onClose: () => void;
   onContact?: () => void;
 }
 
 export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
   listing,
-  onClose,
   onContact,
 }) => {
-  
+  const [windowWidth, setWindowWidth] = React.useState(() =>
+    Dimensions.get('window').width
+  );
+
+  React.useEffect(() => {
+    Dimensions.addEventListener('change', ({ window }) => {
+      setWindowWidth(window.width);
+      console.log('Window width changed to', window.width);
+    });
+    console.log('Dimensions Listener Registered')
+  }, []);
 
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('en-EU', {
@@ -48,36 +56,13 @@ export const PropertyDetails: React.FC<PropertyDetailsProps> = ({
         { backgroundColor: COLORS.background },
       ]}
     >
-      <View
-        style={[
-          styles.header,
-          {
-            backgroundColor: COLORS.surface,
-            borderBottomColor: COLORS.border,
-          },
-        ]}
-      >
-        <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-          <Text style={[styles.closeText, { color: COLORS.primary }]}>
-            ← Back
-          </Text>
-        </TouchableOpacity>
-        <Text
-          style={[styles.headerTitle, { color: COLORS.text }]}
-          numberOfLines={1}
-        >
-          {listing.title}
-        </Text>
-        <View style={styles.placeholder} />
-      </View>
-
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
       >
         <Image
           source={{ uri: listing.imageUrl }}
-          style={styles.image}
+          style={[styles.image, { width: windowWidth, height: windowWidth * 0.65 }]}
           resizeMode="cover"
         />
 
@@ -226,36 +211,9 @@ const FeatureItem: React.FC<{
   </View>
 );
 
-const { width } = Dimensions.get('window');
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-  },
-  closeButton: {
-    padding: 4,
-    width: 60,
-  },
-  closeText: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  headerTitle: {
-    flex: 1,
-    fontSize: 17,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  placeholder: {
-    width: 60,
   },
   scrollView: {
     flex: 1,
@@ -263,10 +221,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 32,
   },
-  image: {
-    width: width,
-    height: width * 0.65,
-  },
+  image: {},
   infoCard: {
     margin: 16,
     padding: 16,
